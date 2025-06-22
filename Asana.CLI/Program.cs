@@ -1,4 +1,5 @@
 ﻿using Asana.Library.Models;
+using Asana.Library.Services;
 using System;
 using System.ComponentModel.Design;
 
@@ -6,16 +7,14 @@ namespace Asana
 {
     public class Program
     {
+        
         public static void Main(string[] args)
         {
             var toDos = new List<ToDo>();
             var projects = new List<Projects>();
 
+            var toDoSvc = ToDoServiceProxy.Current;
             int choiceInt;
-            var projectCount = 0;
-            var itemCount = 0;
-            var toDoChoice = 0;
-            var projectChoice = 0;
             do
             {
                 Console.WriteLine("Choose a menu option:");
@@ -46,24 +45,33 @@ namespace Asana
                             Console.Write("Description:");
                             var description = Console.ReadLine();
 
-                            toDos.Add(new ToDo { Name = name,
+                            toDoSvc.AddOrUpdate(new ToDo
+                            {
+                                Name = name,
                                 Description = description,
                                 IsCompleted = false,
-                                Id = ++itemCount});
+                                Id = 0
+                            });
                             break;
 
                         case 2: // List all ToDos
                             toDos.ForEach(Console.WriteLine);
+                        case 2:
+                            toDoSvc.DisplayToDos(true);
                             break;
 
                         case 3: // List all outstanding ToDos
                             toDos.Where(t => (t != null) && !(t?.IsCompleted ?? false))
                                 .ToList()
                                 .ForEach(Console.WriteLine);
+                        case 3:
+                            toDoSvc.DisplayToDos();
                             break;
 
                         case 4: // Delete a ToDo
                             toDos.ForEach(Console.WriteLine);
+                        case 4:
+                            toDoSvc.DisplayToDos(true);
                             Console.Write("ToDo to Delete: ");
                             toDoChoice = int.Parse(Console.ReadLine() ?? "0");
 
@@ -72,15 +80,21 @@ namespace Asana
                             {
                                 toDos.Remove(reference);
                             }
+                            var toDoChoice4 = int.Parse(Console.ReadLine() ?? "0");
+
+                            var reference = toDoSvc.GetById(toDoChoice4);
+                            toDoSvc.DeleteToDo(reference);
                             break;
 
                         case 5: // Update a ToDo
                             toDos.ForEach(Console.WriteLine);
+                        case 5:
+                            toDoSvc.DisplayToDos(true);
                             Console.Write("ToDo to Update: ");
-                            toDoChoice = int.Parse(Console.ReadLine() ?? "0");
-                            var updateReference = toDos.FirstOrDefault(t => t.Id == toDoChoice);
+                            var toDoChoice5 = int.Parse(Console.ReadLine() ?? "0");
+                            var updateReference = toDoSvc.GetById(toDoChoice5);
 
-                            if(updateReference != null)
+                            if (updateReference != null)
                             {
                                 Console.Write("Name:");
                                 updateReference.Name = Console.ReadLine();
@@ -162,6 +176,7 @@ namespace Asana
                                 Console.Write("Description:");
                                 puReference.Description = Console.ReadLine();
                             }
+                            toDoSvc.AddOrUpdate(updateReference);
                             break;
 
                         case 11: // Add ToDos to a Project
