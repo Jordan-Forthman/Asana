@@ -20,4 +20,19 @@ namespace Asana.Library.Models
             return $"[{Id}] {Name} - {Description}";
         }
     }
+
+    public class Projects
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public int? CompletePercent {  get; set; }
+
+        public List<ToDo>? ToDos { get; set; }
+
+        public override string ToString()
+        {
+            return $"[{Id}] {Name} - {Description}";
+        }
+    }
 }
