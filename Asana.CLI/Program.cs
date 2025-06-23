@@ -12,6 +12,8 @@ namespace Asana
         {
             var toDos = new List<ToDo>();
             var projects = new List<Projects>();
+            var projectSvc = ProjectServiceProxy.Current;
+
 
             var toDoSvc = ToDoServiceProxy.Current;
             int choiceInt;
@@ -38,8 +40,7 @@ namespace Asana
                     switch (choiceInt)
                     {
 
-                        case 1: // Create ToDo
-
+                        case 1:
                             Console.Write("Name:");
                             var name = Console.ReadLine();
                             Console.Write("Description:");
@@ -53,41 +54,20 @@ namespace Asana
                                 Id = 0
                             });
                             break;
-
-                        case 2: // List all ToDos
-                            toDos.ForEach(Console.WriteLine);
                         case 2:
                             toDoSvc.DisplayToDos(true);
                             break;
-
-                        case 3: // List all outstanding ToDos
-                            toDos.Where(t => (t != null) && !(t?.IsCompleted ?? false))
-                                .ToList()
-                                .ForEach(Console.WriteLine);
                         case 3:
                             toDoSvc.DisplayToDos();
                             break;
-
-                        case 4: // Delete a ToDo
-                            toDos.ForEach(Console.WriteLine);
                         case 4:
                             toDoSvc.DisplayToDos(true);
                             Console.Write("ToDo to Delete: ");
-                            toDoChoice = int.Parse(Console.ReadLine() ?? "0");
-
-                            var reference = toDos.FirstOrDefault(t => t.Id == toDoChoice);
-                            if (reference != null)
-                            {
-                                toDos.Remove(reference);
-                            }
                             var toDoChoice4 = int.Parse(Console.ReadLine() ?? "0");
 
                             var reference = toDoSvc.GetById(toDoChoice4);
                             toDoSvc.DeleteToDo(reference);
                             break;
-
-                        case 5: // Update a ToDo
-                            toDos.ForEach(Console.WriteLine);
                         case 5:
                             toDoSvc.DisplayToDos(true);
                             Console.Write("ToDo to Update: ");
@@ -101,7 +81,7 @@ namespace Asana
                                 Console.Write("Description:");
                                 updateReference.Description = Console.ReadLine();
                             }
-
+                            toDoSvc.AddOrUpdate(updateReference);
                             break;
 
                         case 6: // Create a Project
@@ -110,17 +90,17 @@ namespace Asana
                             Console.Write("Description:");
                             description = Console.ReadLine();
 
-                            projects.Add(new Projects
+                            projectSvc.AddOrUpdate(new Projects
                             {
                                 Name = name,
                                 Description = description,
-                                Id = ++projectCount
+                                Id = 0,
+                                CompletePercent = 0
                             });
-
                             break;
 
                         case 7: // List all Projects
-                            projects.ForEach(Console.WriteLine);
+                            projectSvc.DisplayProjects();
                             break;
 
                         case 8: // List all ToDos in a Project
@@ -128,7 +108,7 @@ namespace Asana
                             var projectIdInput = Console.ReadLine();
                             if (int.TryParse(projectIdInput, out int projectId))
                             {
-                                var project = projects.FirstOrDefault(p => p.Id == projectId);
+                                var project = projectSvc.GetById(projectId);
                                 if (project != null)
                                 {
                                     if (project.ToDos != null && project.ToDos.Any())
@@ -152,31 +132,58 @@ namespace Asana
                             break;
 
                         case 9: // Delete a Project
-                            projects.ForEach(Console.WriteLine);
+                            projectSvc.DisplayProjects();
                             Console.Write("Project to Delete: ");
-                            projectChoice = int.Parse(Console.ReadLine() ?? "0");
-
-                            var projectReference = projects.FirstOrDefault(p => p.Id == projectChoice);
-                            if (projectReference != null)
+                            var projectIdToDelete = Console.ReadLine();
+                            if (int.TryParse(projectIdToDelete, out int deleteId))
                             {
-                                projects.Remove(projectReference);
+                                var projectReference = projectSvc.GetById(deleteId);
+                                if (projectReference != null)
+                                {
+                                    projectSvc.DeleteProject(projectReference);
+                                    Console.WriteLine($"Project [{deleteId}] deleted.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Project with ID {deleteId} not found.");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("ERROR: Invalid Project ID.");
                             }
                             break;
 
                         case 10: // Update a Project
-                            projects.ForEach(Console.WriteLine);
-                            Console.Write("ToDo to Update: ");
-                            projectChoice = int.Parse(Console.ReadLine() ?? "0");
-                            var puReference = projects.FirstOrDefault(p => p.Id == projectChoice);
-
-                            if (puReference != null)
+                            projectSvc.DisplayProjects();
+                            Console.Write("Project to Update: ");
+                            var projectIdToUpdate = Console.ReadLine();
+                            if (int.TryParse(projectIdToUpdate, out int updateId))
                             {
-                                Console.Write("Name:");
-                                puReference.Name = Console.ReadLine();
-                                Console.Write("Description:");
-                                puReference.Description = Console.ReadLine();
+                                var puReference = projectSvc.GetById(updateId);
+                                if (puReference != null)
+                                {
+                                    Console.Write("Name:");
+                                    puReference.Name = Console.ReadLine();
+                                    Console.Write("Description:");
+                                    puReference.Description = Console.ReadLine();
+                                    Console.Write("Complete Percent (0-100): ");
+                                    if (int.TryParse(Console.ReadLine(), out int completePercent))
+                                    {
+                                        puReference.CompletePercent = completePercent;
+                                    }
+                                    projectSvc.AddOrUpdate(puReference);
+                                    Console.WriteLine($"Project [{updateId}] updated.");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Project with ID {updateId} not found.");
+                                }
                             }
-                            toDoSvc.AddOrUpdate(updateReference);
+                            else
+                            {
+                                Console.WriteLine("ERROR: Invalid Project ID.");
+                            }
                             break;
 
                         case 11: // Add ToDos to a Project
@@ -184,36 +191,24 @@ namespace Asana
                             var pIdInput = Console.ReadLine();
                             if (int.TryParse(pIdInput, out int pId))
                             {
-                                var project = projects.FirstOrDefault(p => p.Id == pId);
+                                var project = projectSvc.GetById(pId);
                                 if (project != null)
                                 {
-                                    if (projects.Any())
+                                    if (toDoSvc.ToDos.Any())
                                     {
                                         Console.WriteLine("Available ToDos:");
-                                        toDos.ForEach(Console.WriteLine);
+                                        toDoSvc.ToDos.ForEach(Console.WriteLine);
                                         Console.Write("Enter ToDo ID to add to project: ");
                                         var toDoIdInput = Console.ReadLine();
                                         if (int.TryParse(toDoIdInput, out int toDoId))
                                         {
-                                            var toDo = toDos.FirstOrDefault(t => t.Id == toDoId);
-                                            if (toDo != null)
+                                            if (projectSvc.AddToDoToProject(pId, toDoId))
                                             {
-                                                // Initialize ToDos list if null
-                                                project.ToDos ??= new List<ToDo>();
-                                                // Add ToDo to project's ToDos list if not already present
-                                                if (!project.ToDos.Contains(toDo))
-                                                {
-                                                    project.ToDos.Add(toDo);
-                                                    Console.WriteLine($"ToDo [{toDo.Id}] added to Project [{project.Id}].");
-                                                }
-                                                else
-                                                {
-                                                    Console.WriteLine($"ToDo [{toDo.Id}] is already in Project [{project.Id}].");
-                                                }
+                                                Console.WriteLine($"ToDo [{toDoId}] added to Project [{pId}].");
                                             }
                                             else
                                             {
-                                                Console.WriteLine($"ToDo with ID {toDoId} not found.");
+                                                Console.WriteLine($"Failed to add ToDo [{toDoId}] to Project [{pId}]. ToDo or Project not found, or ToDo already in Project.");
                                             }
                                         }
                                         else
@@ -244,13 +239,13 @@ namespace Asana
                             Console.WriteLine("ERROR: Unknown menu selection");
                             break;
                     }
-                } else
+                }
+                else
                 {
                     Console.WriteLine($"ERROR: {choice} is not a valid menu selection");
                 }
 
             } while (choiceInt != 12);
-
         }
     }
 }

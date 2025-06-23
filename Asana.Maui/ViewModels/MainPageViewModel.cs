@@ -14,19 +14,20 @@ namespace Asana.Maui.ViewModels
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private ToDoServiceProxy _toDoSvc;
+        private ProjectServiceProxy _projectSvc;
 
         public MainPageViewModel()
         {
             _toDoSvc = ToDoServiceProxy.Current;
+            _projectSvc = ProjectServiceProxy.Current;
         }
 
-        public ToDoDetailViewModel SelectedToDo { get; set; }
         public ObservableCollection<ToDoDetailViewModel> ToDos
         {
             get
             {
                 var toDos = _toDoSvc.ToDos
-                        .Select(t => new ToDoDetailViewModel(t));
+                    .Select(t => new ToDoDetailViewModel(t));
                 if (!IsShowCompleted)
                 {
                     toDos = toDos.Where(t => !t?.Model?.IsCompleted ?? false);
@@ -35,15 +36,25 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        public int SelectedToDoId => SelectedToDo?.Model?.Id ?? 0;
-
-        private bool isShowCompleted;
-        public bool IsShowCompleted { 
+        public ObservableCollection<ProjectDetailViewModel> Projects
+        {
             get
             {
-                return isShowCompleted;
+                return new ObservableCollection<ProjectDetailViewModel>(
+                    _projectSvc.Projects.Select(p => new ProjectDetailViewModel(p)));
             }
+        }
 
+        public ToDoDetailViewModel? SelectedToDo { get; set; }
+        public ProjectDetailViewModel? SelectedProject { get; set; }
+
+        public int SelectedToDoId => SelectedToDo?.Model?.Id ?? 0;
+        public int SelectedProjectId => SelectedProject?.Model?.Id ?? 0;
+
+        private bool isShowCompleted;
+        public bool IsShowCompleted
+        {
+            get => isShowCompleted;
             set
             {
                 if (isShowCompleted != value)
@@ -60,14 +71,24 @@ namespace Asana.Maui.ViewModels
             {
                 return;
             }
-
-            ToDoServiceProxy.Current.DeleteToDo(SelectedToDo.Model);
+            _toDoSvc.DeleteToDo(SelectedToDo.Model);
             NotifyPropertyChanged(nameof(ToDos));
+        }
+
+        public void DeleteProject()
+        {
+            if (SelectedProject == null)
+            {
+                return;
+            }
+            _projectSvc.DeleteProject(SelectedProject.Model);
+            NotifyPropertyChanged(nameof(Projects));
         }
 
         public void RefreshPage()
         {
             NotifyPropertyChanged(nameof(ToDos));
+            NotifyPropertyChanged(nameof(Projects));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
