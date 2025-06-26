@@ -68,6 +68,11 @@ namespace Asana.Maui.ViewModels
             }
         }
 
+        public void AddOrUpdateProject()
+        {
+            ProjectServiceProxy.Current.AddOrUpdate(Model);
+        }
+
         public void Save()
         {
             if (Model != null)

@@ -39,6 +39,14 @@
             <Label Text="Description: " Grid.Column="0"/>
             <Entry Text="{Binding Model.Description}" Grid.Column="1"/>
         </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Label Text="Due Date: " Grid.Column="0"/>
+            <DatePicker Date="{Binding DueDate, Mode=TwoWay}" Grid.Column="1" MinimumDate="01/01/2020" MaximumDate="12/31/2030"/>
+        </Grid>
         <Button Text="Ok" Clicked="OkClicked"/>
         <Button Text="Cancel" Clicked="CancelClicked"/>
     </VerticalStackLayout>

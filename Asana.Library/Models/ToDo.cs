@@ -17,6 +17,7 @@ namespace Asana.Library.Models
         public string? Description { get; set; }
         public int? Priority { get; set; }
         public bool? IsCompleted { get; set; }
+        public DateTime? DueDate {  get; set; }
 
 
 
@@ -24,7 +25,7 @@ namespace Asana.Library.Models
 
         public override string ToString()
         {
-            return $"[{Id}] {Name} - {Description}";
+            return $"[{Id}] {Name} - {Description} (Due: {{DueDate?.ToString(\"MM/dd/yyyy\") ?? \"No due date\"}})\";";
         }
     }
 }

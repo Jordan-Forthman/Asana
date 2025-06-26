@@ -64,6 +64,18 @@ namespace Asana.Maui.ViewModels
             ToDoServiceProxy.Current.AddOrUpdate(Model);
         }
 
+        public DateTime? DueDate
+        {
+            get => Model?.DueDate;
+            set
+            {
+                if (Model != null && Model.DueDate != value)
+                {
+                    Model.DueDate = value;
+                }
+            }
+        }
+
         //This is option 1 to fix the UX issue with Priority
         public string PriorityDisplay
         {

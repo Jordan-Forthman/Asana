@@ -45,6 +45,9 @@ namespace Asana
                             var name = Console.ReadLine();
                             Console.Write("Description:");
                             var description = Console.ReadLine();
+                            Console.Write("Due Date (MM/dd/yyyy, leave blank for none): ");
+                            var dueDateInput = Console.ReadLine();
+                            DateTime? dueDate = string.IsNullOrWhiteSpace(dueDateInput) ? null : DateTime.Parse(dueDateInput);
 
                             toDoSvc.AddOrUpdate(new ToDo
                             {
@@ -80,6 +83,9 @@ namespace Asana
                                 updateReference.Name = Console.ReadLine();
                                 Console.Write("Description:");
                                 updateReference.Description = Console.ReadLine();
+                                Console.Write("Due Date (MM/dd/yyyy, leave blank for none): ");
+                                var updateDueDateInput = Console.ReadLine();
+                                updateReference.DueDate = string.IsNullOrWhiteSpace(updateDueDateInput) ? null : DateTime.Parse(updateDueDateInput);
                             }
                             toDoSvc.AddOrUpdate(updateReference);
                             break;
