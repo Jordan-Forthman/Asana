@@ -40,6 +40,12 @@ namespace Asana.Maui.ViewModels
         {
             get
             {
+                var projects = _projectSvc.Projects
+                    .Select(p => new ProjectDetailViewModel(p));
+                if (!IsShowCompletedProjects)
+                {
+                    projects = projects.Where(p => !(p?.Model?.CompletePercent >= 100));
+                }
                 return new ObservableCollection<ProjectDetailViewModel>(
                     _projectSvc.Projects.Select(p => new ProjectDetailViewModel(p)));
             }
@@ -61,6 +67,20 @@ namespace Asana.Maui.ViewModels
                 {
                     isShowCompleted = value;
                     NotifyPropertyChanged(nameof(ToDos));
+                }
+            }
+        }
+
+        private bool isShowCompletedProjects;
+        public bool IsShowCompletedProjects
+        {
+            get => isShowCompletedProjects;
+            set
+            {
+                if (isShowCompletedProjects != value)
+                {
+                    isShowCompletedProjects = value;
+                    NotifyPropertyChanged(nameof(Projects));
                 }
             }
         }

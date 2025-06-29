@@ -11,9 +11,11 @@
             Spacing="25">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="10*"/>
-                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- Tool Bar-->
                 <Grid Grid.Row="0">
@@ -23,6 +25,8 @@
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Text="Show Completed Tasks:"/>
                     <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompleted}"/>
+                    <Label Margin="20" Grid.Column="2" Text="Show Completed Projects:" VerticalOptions="Center"/>
+                    <CheckBox Margin="5" Grid.Column="3" IsChecked="{Binding IsShowCompletedProjects}"/>
                 </Grid>
                 <!-- ToDo List-->
                 <ListView
@@ -56,11 +60,46 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!-- Projects Label -->
+                <Label Grid.Row="2" Text="Projects" FontSize="Large" FontAttributes="Bold" Margin="0,20,0,0"/>
+                <!-- Projects List -->
+                <ListView Grid.Row="3"
+                          ItemsSource="{Binding Projects}"
+                          SelectedItem="{Binding SelectedProject}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="10*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Text="{Binding Model.Id}" VerticalOptions="Center"/>
+                                    <Grid Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Label TextColor="Blue" Grid.Row="0" Text="{Binding Model.Name}"/>
+                                        <Label Grid.Row="1" Text="{Binding Model.Description}"/>
+                                    </Grid>
+                                    <Label Grid.Column="2" Text="{Binding Model.CompletePercent, StringFormat='{0}% Complete'}" VerticalOptions="Center"/>
+                                    <Button Grid.Column="3" Text="Delete" Clicked="DeleteProjectClicked" Command="{Binding DeleteCommand}"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 <!-- Button Bar -->
                 <VerticalStackLayout Grid.Row="2">
                     <Button Text="Add New ToDo" Clicked="AddNewClicked"/>
                     <Button Text="Edit Selected ToDo" Clicked="EditClicked"/>
                     <Button Text="Delete Selected ToDo" Clicked="DeleteClicked"/>
+                    <Button Text="Add New Project" Clicked="AddProjectClicked"/>
+                    <Button Text="Edit Selected Project" Clicked="EditProjectClicked"/>
+                    <Button Text="Delete Selected Project" Clicked="DeleteProjectClicked"/>
                 </VerticalStackLayout>
             </Grid>
         </VerticalStackLayout>

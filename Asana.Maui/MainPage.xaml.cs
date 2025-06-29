@@ -27,6 +27,21 @@ namespace Asana.Maui
             (BindingContext as MainPageViewModel)?.DeleteToDo();
         }
 
+        private void AddProjectClicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void EditProjectClicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DeleteProjectClicked(object sender, EventArgs e)
+        {
+
+        }
+
         private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
         {
             (BindingContext as MainPageViewModel)?.RefreshPage();
