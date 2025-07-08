@@ -16,21 +16,23 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="10*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <!-- Tool Bar-->
+                <!-- ToDo Tool Bar-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="Show Completed Tasks:"/>
+                    <Label Margin ="10" Grid.Column="0" Text="Show Completed Tasks:"/>
                     <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompleted}"/>
-                    <Label Margin="20" Grid.Column="2" Text="Show Completed Projects:" VerticalOptions="Center"/>
-                    <CheckBox Margin="5" Grid.Column="3" IsChecked="{Binding IsShowCompletedProjects}"/>
                 </Grid>
+                <!-- ToDo Label -->
+                <Label Grid.Row="1" Text="ToDo's" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0"/>
                 <!-- ToDo List-->
                 <ListView
-                Grid.Row="1"
+                Grid.Row="2"
                 ItemsSource="{Binding ToDos}"
                 SelectedItem="{Binding SelectedToDo}"
                 >
@@ -60,10 +62,19 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+                <!-- Projects Tool Bar-->
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Margin="10" Grid.Column="0" Text="Show Completed Projects:" VerticalOptions="Center"/>
+                    <CheckBox Margin="5" Grid.Column="1" IsChecked="{Binding IsShowCompletedProjects}"/>
+                </Grid>
                 <!-- Projects Label -->
-                <Label Grid.Row="2" Text="Projects" FontSize="Large" FontAttributes="Bold" Margin="0,20,0,0"/>
+                <Label Grid.Row="4" Text="Projects" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0"/>
                 <!-- Projects List -->
-                <ListView Grid.Row="3"
+                <ListView Grid.Row="5"
                           ItemsSource="{Binding Projects}"
                           SelectedItem="{Binding SelectedProject}">
                     <ListView.ItemTemplate>
@@ -76,7 +87,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0" Text="{Binding Model.Id}" VerticalOptions="Center"/>
+                                    <CheckBox IsChecked="{Binding Model.IsCompleted}" Grid.Column="0"/>
                                     <Grid Grid.Column="1">
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -93,7 +104,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
                 <!-- Button Bar -->
-                <VerticalStackLayout Grid.Row="2">
+                <VerticalStackLayout Grid.Row="6">
                     <Button Text="Add New ToDo" Clicked="AddNewClicked"/>
                     <Button Text="Edit Selected ToDo" Clicked="EditClicked"/>
                     <Button Text="Delete Selected ToDo" Clicked="DeleteClicked"/>
