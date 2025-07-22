@@ -18,8 +18,6 @@ namespace Asana.Library.Models
         public int? Priority { get; set; }
         public bool? IsCompleted { get; set; }
 
-        public int? ProjectId { get; set; }
-
         public int Id { get; set; }
 
         public override string ToString()

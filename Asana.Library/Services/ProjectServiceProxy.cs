@@ -18,6 +18,14 @@ namespace Asana.Library.Services
             {
                 return projects;
             }
+            private set // For CLI
+            {
+                if (value != projects)
+                {
+
+                }
+                projects = value;
+            }
         }
         private ProjectServiceProxy() {
             /*projects = new List<Project>
@@ -44,6 +52,94 @@ namespace Asana.Library.Services
 
                 return instance;
             }
+        }
+
+        private int nextKey // For CLI
+        {
+            get
+            {
+                if (Projects.Any())
+                {
+                    return Projects.Select(p => p.Id).Max() + 1;
+                }
+                return 1;
+            }
+        }
+
+        public Project? GetById(int id) // For CLI
+        {
+            return Projects.FirstOrDefault(t => t.Id == id);
+        }
+
+        public Project? AddOrUpdate(Project? project) // For CLI
+        {
+            if (project != null)
+            {
+                if (project.Id == 0)
+                {
+                    project.Id = nextKey;
+                    project.ToDoList ??= new List<ToDo>();
+                    projects.Add(project);
+                }
+                else
+                {
+                    var existing = GetById(project.Id);
+                    if (existing != null)
+                    {
+                        existing.Name = project.Name;
+                        existing.Description = project.Description;
+                        existing.CompletePercent = project.CompletePercent;
+                        // Preserve existing ToDos list
+                        existing.ToDoList = project.ToDoList ?? existing.ToDoList;
+                    }
+                    else
+                    {
+                        project.ToDoList ??= new List<ToDo>();
+                        projects.Add(project);
+                    }
+                }
+            }
+            return project;
+        }
+
+        public void DeleteProject(Project? project) // For CLI
+        {
+            if (project == null)
+            {
+                return;
+            }
+            projects.Remove(project);
+        }
+        public void DisplayProjects() // For CLI
+        {
+            Projects.ForEach(Console.WriteLine);
+        }
+
+        public bool AddToDoToProject(int projectId, int toDoId) // For CLI
+        {
+            var project = GetById(projectId);
+            var toDo = ToDoServiceProxy.Current.GetById(toDoId);
+            if (project != null && toDo != null)
+            {
+                project.ToDoList ??= new List<ToDo>();
+                if (!project.ToDoList.Contains(toDo))
+                {
+                    project.ToDoList.Add(toDo);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool RemoveToDoFromProject(int projectId, int toDoId) // For CLI
+        {
+            var project = GetById(projectId);
+            var toDo = ToDoServiceProxy.Current.GetById(toDoId);
+            if (project != null && toDo != null && project.ToDoList != null)
+            {
+                return project.ToDoList.Remove(toDo);
+            }
+            return false;
         }
     }
 }
