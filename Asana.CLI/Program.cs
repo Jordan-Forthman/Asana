@@ -98,9 +98,9 @@ namespace Asana
                                 var project = projectSvc.GetById(projectId);
                                 if (project != null)
                                 {
-                                    if (project.ToDos != null && project.ToDos.Any())
+                                    if (project.ToDoList != null && project.ToDoList.Any())
                                     {
-                                        project.ToDos.ForEach(Console.WriteLine);
+                                        project.ToDoList.ForEach(Console.WriteLine);
                                     }
                                     else
                                     {
