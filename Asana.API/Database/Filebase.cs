@@ -78,11 +78,11 @@ namespace Api.ToDoApplication.Persistence
             {
                 var root = new DirectoryInfo(_toDoRoot);
                 var _toDos = new List<ToDo>();
-                foreach(var patientFile in root.GetFiles())
+                foreach(var toDoFile in root.GetFiles())
                 {
                     var toDo = JsonConvert
                         .DeserializeObject<ToDo>
-                        (File.ReadAllText(patientFile.FullName));
+                        (File.ReadAllText(toDoFile.FullName));
                     if(toDo != null)
                     {
                         _toDos.Add(toDo);
@@ -92,12 +92,18 @@ namespace Api.ToDoApplication.Persistence
                 return _toDos;
             }
         }
-
-
         public bool Delete(string type, string id)
         {
-            //TODO: refer to AddOrUpdate for an idea of how you can implement this.
-            return true;
+            if (int.TryParse(id, out int idInt) && type == "ToDo")
+            {
+                string path = $"{_toDoRoot}\\{idInt}.json";
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
