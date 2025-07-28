@@ -17,7 +17,7 @@ public partial class ProjectsView : ContentPage
 
     private void AddClicked(object sender, EventArgs e)
     {
-
+        Shell.Current.GoToAsync("//ProjectDetails");
     }
 
     private void EditClicked(object sender, EventArgs e)

@@ -13,6 +13,7 @@ namespace Asana.Maui.ViewModels
         public List<ProjectViewModel> Projects { get; set; }
 
         public ProjectViewModel? SelectedProject {get; set;}
+        public Project? Model { get; set; }
 
         public ProjectsPageViewModel()
         {
@@ -20,5 +21,11 @@ namespace Asana.Maui.ViewModels
                 .Select(p => new ProjectViewModel(p))
                 .ToList();
         }
+        public void AddOrUpdateProject()
+        {
+            ProjectServiceProxy.Current.AddOrUpdate(Model);
+        }
+
+
     }
 }

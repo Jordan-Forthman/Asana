@@ -68,6 +68,7 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
+                    <!--Project List-->
                         <ListView
                         Grid.Row="2"
                         ItemsSource="{Binding Projects}"

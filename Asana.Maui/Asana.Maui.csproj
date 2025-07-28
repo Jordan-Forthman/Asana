@@ -68,6 +68,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\ProjectDetailView.xaml.cs">
+	    <DependentUpon>ProjectDetailView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\ProjectDetailView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ProjectsView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
