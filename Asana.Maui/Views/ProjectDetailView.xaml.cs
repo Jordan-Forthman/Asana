@@ -15,20 +15,10 @@ public partial class ProjectDetailView : INotifyPropertyChanged
         InitializeComponent();
     }
 
-    public int ProjectId { get; set; }
+    private int _projectId;
+    public int ProjectId { get; set; } = 0;
+
     public Project? Model { get; set; }
-
-
-    public ObservableCollection<ToDoDetailViewModel> AvailableToDos
-    {
-        get
-        {
-            var allToDos = ToDoServiceProxy.Current.ToDos;
-            var projectToDos = Model?.ToDoList ?? new List<ToDo>();
-            return new ObservableCollection<ToDoDetailViewModel>(
-                allToDos.Where(t => !projectToDos.Contains(t)).Select(t => new ToDoDetailViewModel(t)));
-        }
-    }
 
     private ToDoDetailViewModel? _selectedToDo;
     public ToDoDetailViewModel? SelectedToDo
@@ -57,7 +47,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
         var viewModel = BindingContext as ProjectsPageViewModel;
         if (viewModel != null)
         {
-            foreach (var toDo in viewModel.ToDos.Where(t => t.IsSelected))
+            foreach (var toDo in viewModel.CurrentToDos.Where(t => t.IsSelected))
             {
                 viewModel.RemoveToDo(toDo.Model.Id);
             }
@@ -70,7 +60,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
         var viewModel = (ProjectsPageViewModel)BindingContext;
         if (viewModel != null)
         {
-            foreach (var toDo in viewModel.ToDos.Where(t => t.IsSelected))
+            foreach (var toDo in viewModel.CurrentToDos.Where(t => t.IsSelected))
             {
                 viewModel.AddToDo(toDo.Model.Id);
             }
@@ -83,5 +73,19 @@ public partial class ProjectDetailView : INotifyPropertyChanged
     private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        if (ProjectId == 0)
+        {
+            BindingContext = new ProjectsPageViewModel();
+        }
+        else
+        {
+            var project = ProjectServiceProxy.Current.GetById(ProjectId);
+            BindingContext = project != null ? new ProjectsPageViewModel(project) : new ProjectsPageViewModel();
+        }
     }
 }
