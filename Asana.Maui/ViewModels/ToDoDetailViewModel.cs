@@ -2,6 +2,7 @@
 using Asana.Library.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using System.Windows.Input;
 
 namespace Asana.Maui.ViewModels
 {
-    public class ToDoDetailViewModel
+    public class ToDoDetailViewModel : INotifyPropertyChanged
     {
         public ToDoDetailViewModel() {
             Model = new ToDo();
@@ -58,6 +59,27 @@ namespace Asana.Maui.ViewModels
                     Model.Priority = value;
                 }
             }
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        private void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
         public void AddOrUpdateToDo()

@@ -3,10 +3,107 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Asana.Maui.Views.ProjectDetailView"
              Title="ProjectDetailView">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <!-- Project Details Section -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Text="Id: " Grid.Column="0" VerticalOptions="Center"/>
+                <Entry Text="{Binding Model.Id}" Grid.Column="1" IsReadOnly="True"/>
+                <Label Text="Name: " Grid.Column="2" VerticalOptions="Center"/>
+                <Entry Text="{Binding Model.Name}" Grid.Column="3"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Label Text="Description: " Grid.Column="0" VerticalOptions="Center"/>
+                <Entry Text="{Binding Model.Description}" Grid.Column="1"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Text="Complete Percent: " Grid.Column="0" VerticalOptions="Center"/>
+                <Entry Text="{Binding Model.CompletePercent}" Grid.Column="1" Keyboard="Numeric"/>
+            </Grid>
+            <!-- ToDos in Project Section -->
+            <Label Text="ToDos in Project" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,10"/>
+            <ListView ItemsSource="{Binding ToDos}"
+                      SelectedItem="{Binding SelectedToDo}"
+                      HeightRequest="200">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding IsSelected}" Grid.Column="0"/>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label TextColor="Blue" Grid.Row="0" Text="{Binding Model.Name}"/>
+                                    <Label Grid.Row="1" Text="{Binding Model.Description}"/>
+                                </Grid>
+                                <Label Grid.Column="2" Text="{Binding Model.DueDate, StringFormat='Due: {0:MM/dd/yyyy}'}" VerticalOptions="Center"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Text="Remove Selected ToDos" Clicked="RemoveToDosClicked" Margin="0,10,0,0"/>
+            <!-- Available ToDos Section -->
+            <Label Text="Available ToDos" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,10"/>
+            <ListView ItemsSource="{Binding AvailableToDos}"
+                      SelectedItem="{Binding SelectedToDo}"
+                      HeightRequest="200">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding IsSelected}" Grid.Column="0"/>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label TextColor="Red" Grid.Row="0" Text="{Binding Model.Name}"/>
+                                    <Label Grid.Row="1" Text="{Binding Model.Description}"/>
+                                </Grid>
+                                <Label Grid.Column="2" Text="{Binding Model.DueDate, StringFormat='Due: {0:MM/dd/yyyy}'}" VerticalOptions="Center"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Text="Add Selected ToDos" Clicked="AddToDosClicked" Margin="0,10,0,0"/>
+            <!-- Action Buttons -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Text="Ok" Grid.Column="0" Clicked="OkClicked"/>
+                <Button Text="Cancel" Grid.Column="1" Clicked="CancelClicked"/>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

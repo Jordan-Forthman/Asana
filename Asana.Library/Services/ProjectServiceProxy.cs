@@ -22,9 +22,8 @@ namespace Asana.Library.Services
             {
                 if (value != projects)
                 {
-
+                    projects = value;
                 }
-                projects = value;
             }
         }
         private ProjectServiceProxy() {
