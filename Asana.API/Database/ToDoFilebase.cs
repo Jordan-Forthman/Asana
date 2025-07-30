@@ -8,27 +8,27 @@ using System.Threading.Tasks;
 
 namespace Api.ToDoApplication.Persistence
 {
-    public class Filebase
+    public class ToDoFilebase
     {
         private string _root;
         private string _toDoRoot;
-        private static Filebase _instance;
+        private static ToDoFilebase _instance;
 
 
-        public static Filebase Current
+        public static ToDoFilebase Current
         {
             get
             {
                 if(_instance == null)
                 {
-                    _instance = new Filebase();
+                    _instance = new ToDoFilebase();
                 }
 
                 return _instance;
             }
         }
 
-        private Filebase()
+        private ToDoFilebase()
         {
             _root = @"C:\temp";
             _toDoRoot = $"{_root}\\ToDos";
