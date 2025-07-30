@@ -11,18 +11,18 @@ namespace Asana.Library.Services
 {
     public  class ProjectServiceProxy
     {
-        private List<Project> projects;
+        private List<Project> _projectsList;
         public List<Project> Projects
         {
             get
             {
-                return projects;
+                return _projectsList;
             }
             private set // For CLI
             {
-                if (value != projects)
+                if (value != _projectsList)
                 {
-                    projects = value;
+                    _projectsList = value;
                 }
             }
         }
@@ -34,7 +34,7 @@ namespace Asana.Library.Services
                 new Project{Id = 3, Name = "Project 3"}
             }; */
             var projectData = new WebRequestHandler().Get("/Project/Expand").Result;
-            projects = JsonConvert.DeserializeObject<List<Project>>(projectData) ?? new List<Project>();
+            _projectsList = JsonConvert.DeserializeObject<List<Project>>(projectData) ?? new List<Project>();
         }
         private static object _lock = new object();
         private static ProjectServiceProxy? instance;
@@ -48,7 +48,6 @@ namespace Asana.Library.Services
                         instance = new ProjectServiceProxy();
                     }
                 }
-
                 return instance;
             }
         }
@@ -78,7 +77,7 @@ namespace Asana.Library.Services
                 {
                     project.Id = nextKey;
                     project.ToDoList ??= new List<ToDo>();
-                    projects.Add(project);
+                    _projectsList.Add(project);
                 }
                 else
                 {
@@ -94,20 +93,30 @@ namespace Asana.Library.Services
                     else
                     {
                         project.ToDoList ??= new List<ToDo>();
-                        projects.Add(project);
+                        _projectsList.Add(project);
                     }
                 }
             }
             return project;
         }
 
-        public void DeleteProject(Project? project) // For CLI
+        public void DeleteProject(int id)
         {
-            if (project == null)
+            if (id == 0)
             {
                 return;
             }
-            projects.Remove(project);
+            var projectData = new WebRequestHandler().Delete($"/Project/{id}").Result;
+            var projectToDelete = JsonConvert.DeserializeObject<Project>(projectData);
+            if (projectToDelete != null)
+            {
+                var localProject = _projectsList.FirstOrDefault(t => t.Id == projectToDelete.Id);
+                if (localProject != null)
+                {
+                    _projectsList.Remove(localProject);
+                }
+            }
+
         }
         public void DisplayProjects() // For CLI
         {

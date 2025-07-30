@@ -2,6 +2,7 @@ using Asana.Maui.ViewModels;
 
 namespace Asana.Maui.Views;
 
+//Code behind for project management main page
 public partial class ProjectsView : ContentPage
 {
 	public ProjectsView()
@@ -22,11 +23,11 @@ public partial class ProjectsView : ContentPage
 
     private void EditClicked(object sender, EventArgs e)
     {
-
+        Shell.Current.GoToAsync("//ProjectDetails");
     }
 
     private void DeleteClicked(object sender, EventArgs e)
     {
-
+        (BindingContext as ProjectViewModel)?.DoDeleteProject();
     }
 }

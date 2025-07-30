@@ -5,6 +5,9 @@
              Title="ToDoDetailView"
              NavigatedFrom="ContentPage_NavigatedFrom"
              NavigatedTo="ContentPage_NavigatedTo">
+    
+    <!-- UX for the single detailed ToDo info page-->
+    
     <VerticalStackLayout>
         <Grid>
             <Grid.ColumnDefinitions>

@@ -4,6 +4,8 @@
              x:Class="Asana.Maui.Views.ProjectDetailView"
              Title="ProjectDetailView">
 
+    <!-- UX for the single project info display -->
+    
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
             <!-- Project Details Section -->
@@ -65,7 +67,9 @@
                 </ListView.ItemTemplate>
             </ListView>
             <Button Text="Remove Selected ToDos" Clicked="RemoveToDosClicked" Margin="0,10,0,0"/>
+            
             <!-- Available ToDos Section -->
+            
             <Label Text="Available ToDos" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,10"/>
             <ListView ItemsSource="{Binding AvailableToDos}"
                       SelectedItem="{Binding SelectedToDo}"

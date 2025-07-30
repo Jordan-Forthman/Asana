@@ -10,11 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+//Handles project management main page
+
 namespace Asana.Maui.ViewModels
 {
     public class ProjectViewModel: INotifyPropertyChanged
     {
         public Project? Model { get; set; }
+        public ProjectViewModel? SelectedProject { get; set; }
 
         public ObservableCollection<ToDoDetailViewModel> ToDos
         {
@@ -75,6 +78,18 @@ namespace Asana.Maui.ViewModels
             Model = model;
             ToDoVisibility = Visibility.Visible;
             ToggleToDoVisibility = new Command(DoToggleToDoVisibility);
+        }
+
+        // Functionality for updating project state after click events
+        public void AddOrUpdateProject()
+        {
+            ProjectServiceProxy.Current.AddOrUpdate(Model);
+        }
+
+        public void DoDeleteProject()
+        {
+
+            ProjectServiceProxy.Current.DeleteProject(Model?.Id ?? 0);
         }
 
         public override string ToString()

@@ -3,6 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Asana.Maui.Views.ProjectsView"
              Title="ProjectsView">
+    
+    <!-- UX for the project management page -->
+    
     <VerticalStackLayout>
         <Grid>
             <ListView

@@ -9,12 +9,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
+
+//Handles single project detailed view
 namespace Asana.Maui.ViewModels
 {
     public class ProjectsPageViewModel : INotifyPropertyChanged
     {
         public List<ProjectViewModel> Projects { get; set; }
-
         public ProjectViewModel? SelectedProject {get; set;}
         public Project? Model { get; set; }
 
