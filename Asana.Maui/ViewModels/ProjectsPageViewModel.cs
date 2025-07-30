@@ -17,7 +17,23 @@ namespace Asana.Maui.ViewModels
     {
         public List<ProjectViewModel> Projects { get; set; }
         public ProjectViewModel? SelectedProject {get; set;}
-        public Project? Model { get; set; }
+
+        private Project _model;
+        public Project? Model
+        {
+            get => _model;
+            set
+            {
+                _model = value;
+                UpdateToDoLists();
+                OnPropertyChanged(nameof(Model));
+            }
+        }
+
+        public ProjectsPageViewModel(Project project = null)
+        {
+            Model = project ?? new Project();
+        }
 
         public ProjectsPageViewModel()
         {
@@ -26,24 +42,19 @@ namespace Asana.Maui.ViewModels
                 .ToList();
         }
 
-        public ObservableCollection<ToDoDetailViewModel> ToDos
+
+        private ObservableCollection<ToDoDetailViewModel> _currentToDos;
+        public ObservableCollection<ToDoDetailViewModel> CurrentToDos
         {
-            get
-            {
-                return new ObservableCollection<ToDoDetailViewModel>(
-                    Model?.ToDoList?.Select(t => new ToDoDetailViewModel(t)) ?? new List<ToDoDetailViewModel>());
-            }
+                get => _currentToDos;
+                set { _currentToDos = value; OnPropertyChanged(nameof(CurrentToDos)); }
         }
 
+        private ObservableCollection<ToDoDetailViewModel> _availableToDos;
         public ObservableCollection<ToDoDetailViewModel> AvailableToDos
         {
-            get
-            {
-                var allToDos = ToDoServiceProxy.Current.ToDos;
-                var projectToDos = Model?.ToDoList ?? new List<ToDo>();
-                return new ObservableCollection<ToDoDetailViewModel>(
-                    allToDos.Where(t => !projectToDos.Contains(t)).Select(t => new ToDoDetailViewModel(t)));
-            }
+                get => _availableToDos;
+                set {_availableToDos = value; OnPropertyChanged(nameof(AvailableToDos)); }
         }
 
         private ToDoDetailViewModel? _selectedToDo;
@@ -56,6 +67,16 @@ namespace Asana.Maui.ViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        private void UpdateToDoLists()
+        {
+            CurrentToDos = new ObservableCollection<ToDoDetailViewModel>(
+                Model?.ToDoList?.Select(t => new ToDoDetailViewModel(t)) ?? new List<ToDoDetailViewModel>());
+            var allToDos = ToDoServiceProxy.Current.ToDos;
+            var projectToDos = Model?.ToDoList ?? new List<ToDo>();
+            AvailableToDos = new ObservableCollection<ToDoDetailViewModel>(
+                allToDos.Where(t => !projectToDos.Contains(t)).Select(t => new ToDoDetailViewModel(t)));
+        }
         public void AddOrUpdateProject()
         {
             ProjectServiceProxy.Current.AddOrUpdate(Model);
@@ -66,8 +87,7 @@ namespace Asana.Maui.ViewModels
             if (Model != null)
             {
                 ProjectServiceProxy.Current.AddToDoToProject(Model.Id, toDoId);
-                NotifyPropertyChanged(nameof(ToDos));
-                NotifyPropertyChanged(nameof(AvailableToDos));
+                RefreshPage();
             }
         }
 
@@ -76,20 +96,24 @@ namespace Asana.Maui.ViewModels
             if (Model != null)
             {
                 ProjectServiceProxy.Current.RemoveToDoFromProject(Model.Id, toDoId);
-                NotifyPropertyChanged(nameof(ToDos));
-                NotifyPropertyChanged(nameof(AvailableToDos));
+                RefreshPage();
             }
         }
 
         public void RefreshPage()
         {
-            NotifyPropertyChanged(nameof(ToDos));
+            NotifyPropertyChanged(nameof(CurrentToDos));
             NotifyPropertyChanged(nameof(AvailableToDos));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

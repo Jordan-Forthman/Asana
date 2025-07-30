@@ -39,7 +39,7 @@
             </Grid>
             <!-- ToDos in Project Section -->
             <Label Text="ToDos in Project" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,10"/>
-            <ListView ItemsSource="{Binding ToDos}"
+            <ListView ItemsSource="{Binding CurrentToDos}"
                       SelectedItem="{Binding SelectedToDo}"
                       HeightRequest="200">
                 <ListView.ItemTemplate>
