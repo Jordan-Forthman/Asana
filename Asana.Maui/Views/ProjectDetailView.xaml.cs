@@ -41,13 +41,13 @@ public partial class ProjectDetailView : INotifyPropertyChanged
 
     private void OkClicked(object sender, EventArgs e)
     {
-        (BindingContext as ProjectsPageViewModel)?.AddOrUpdateProject();
+        (BindingContext as ProjectDetailViewModel)?.AddOrUpdateProject();
         Shell.Current.GoToAsync("//MainPage");
     }
 
     private void RemoveToDosClicked(object sender, EventArgs e)
     {
-        var viewModel = BindingContext as ProjectsPageViewModel;
+        var viewModel = BindingContext as ProjectDetailViewModel;
         if (viewModel != null)
         {
             foreach (var toDo in viewModel.CurrentToDos.Where(t => t.IsSelected))
@@ -60,7 +60,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
 
     private void AddToDosClicked(object sender, EventArgs e)
     {
-        var viewModel = (ProjectsPageViewModel)BindingContext;
+        var viewModel = (ProjectDetailViewModel)BindingContext;
         if (viewModel != null)
         {
             foreach (var toDo in viewModel.CurrentToDos.Where(t => t.IsSelected))
@@ -78,17 +78,22 @@ public partial class ProjectDetailView : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
     {
-        base.OnNavigatedTo(args);
+        base.OnNavigatedTo(e);
         if (ProjectId == 0)
         {
-            BindingContext = new ProjectsPageViewModel();
+            BindingContext = new ProjectDetailViewModel();
         }
         else
         {
             var project = ProjectServiceProxy.Current.GetById(ProjectId);
-            BindingContext = project != null ? new ProjectsPageViewModel(project) : new ProjectsPageViewModel();
+            BindingContext = project != null ? new ProjectDetailViewModel(project) : new ProjectDetailViewModel();
         }
+    }
+
+    private void ContentPage_NavigatedFrom(object sender, NavigatedFromEventArgs e)
+    {
+
     }
 }

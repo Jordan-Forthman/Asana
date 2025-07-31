@@ -16,7 +16,7 @@ namespace Asana.Library.Services
         {
             get
             {
-                return _projectsList;
+                return _projectsList.ToList();
             }
             private set // For CLI
             {
@@ -26,16 +26,12 @@ namespace Asana.Library.Services
                 }
             }
         }
-        private ProjectServiceProxy() {
-            /*projects = new List<Project>
-            {
-                new Project{Id = 1, Name = "Project 1"},
-                new Project{Id = 2, Name = "Project 2"},
-                new Project{Id = 3, Name = "Project 3"}
-            }; */
+        private ProjectServiceProxy() 
+        {
             var projectData = new WebRequestHandler().Get("/Project/Expand").Result;
             _projectsList = JsonConvert.DeserializeObject<List<Project>>(projectData) ?? new List<Project>();
         }
+
         private static object _lock = new object();
         private static ProjectServiceProxy? instance;
         public static ProjectServiceProxy Current

@@ -18,7 +18,8 @@ namespace Asana.Library.Services
                 return _toDoList.ToList();
             }
 
-            private set {
+            private set 
+            {
                 if (value != _toDoList)
                 {
                     _toDoList = value;

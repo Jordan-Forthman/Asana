@@ -38,7 +38,7 @@ namespace Asana.Maui
 
         }
 
-        private void InLineDeleteClicked(object sender, EventArgs e)
+        private void InLineDeleteToDoClicked(object sender, EventArgs e)
         {
             (BindingContext as MainPageViewModel)?.RefreshPage();
         }

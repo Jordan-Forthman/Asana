@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 //Handles single project detailed view
 namespace Asana.Maui.ViewModels
 {
-    public class ProjectsPageViewModel : INotifyPropertyChanged
+    public class ProjectDetailViewModel : INotifyPropertyChanged
     {
-        public List<ProjectViewModel> Projects { get; set; }
-        public ProjectViewModel? SelectedProject {get; set;}
+        public List<ProjectManViewModel> Projects { get; set; }
+        public ProjectManViewModel? SelectedProject {get; set;}
 
         private Project _model;
         public Project? Model
@@ -30,15 +30,15 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        public ProjectsPageViewModel(Project project = null)
+        public ProjectDetailViewModel(Project project = null)
         {
             Model = project ?? new Project();
         }
 
-        public ProjectsPageViewModel()
+        public ProjectDetailViewModel()
         {
             Projects = ProjectServiceProxy.Current.Projects
-                .Select(p => new ProjectViewModel(p))
+                .Select(p => new ProjectManViewModel(p))
                 .ToList();
         }
 

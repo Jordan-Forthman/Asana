@@ -14,7 +14,7 @@
         Route="MainPage" />
     <ShellContent
         Title="Projects"
-        ContentTemplate="{DataTemplate views:ProjectsView}"
+        ContentTemplate="{DataTemplate views:ProjectManView}"
         Route="ProjectPage"/>
     <ShellContent
         Title="ToDo Details"

@@ -14,7 +14,10 @@ namespace Asana.API.Database
         }
 
         private List<Project> projects = new List<Project>();
-        //public List<Project> Projects { get { return projects; } }
+        public List<Project> Projects 
+        { 
+            get { return projects; } 
+        }
         private FakeDatabase() {
 
             toDos = new List<ToDo>

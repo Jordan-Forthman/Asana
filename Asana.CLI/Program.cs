@@ -119,12 +119,6 @@ namespace Asana
                             break;
 
                         case 9: // Delete a Project
-                            /*toDoSvc.DisplayToDos(true);
-                            Console.Write("ToDo to Delete: ");
-                            var toDoChoice4 = int.Parse(Console.ReadLine() ?? "0");
-
-                            var reference = toDoSvc.GetById(toDoChoice4);
-                            toDoSvc.DeleteToDo(reference?.Id ?? 0);*/
                             projectSvc.DisplayProjects();
                             Console.Write("Project to Delete: ");
                             var projectIdToDelete = Console.ReadLine();

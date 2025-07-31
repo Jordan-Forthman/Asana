@@ -62,7 +62,7 @@
                                                 <Label Grid.Row="1" Text="{Binding Model.Description}"/>
                                             </Grid>
 
-                                            <Button Grid.Column="2" Text="Delete" Clicked="InLineDeleteClicked" Command="{Binding DeleteCommand}"/>
+                                            <Button Grid.Column="2" Text="Delete" Clicked="InLineDeleteToDoClicked" Command="{Binding DeleteCommand}"/>
                                         </Grid>
                                     </ViewCell>
                                 </DataTemplate>
