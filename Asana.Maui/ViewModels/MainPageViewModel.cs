@@ -14,10 +14,12 @@ namespace Asana.Maui.ViewModels
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private ToDoServiceProxy _toDoSvc;
+        private ProjectServiceProxy _projectSvc;
 
         public MainPageViewModel()
         {
             _toDoSvc = ToDoServiceProxy.Current;
+            _projectSvc = ProjectServiceProxy.Current;
             Query = string.Empty;
         }
 
@@ -92,6 +94,7 @@ namespace Asana.Maui.ViewModels
         public void RefreshPage()
         {
             NotifyPropertyChanged(nameof(ToDos));
+            NotifyPropertyChanged(nameof(Projects));
         }
 
         public void HandleSearchClick()

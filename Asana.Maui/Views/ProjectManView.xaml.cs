@@ -38,6 +38,13 @@ public partial class ProjectManView : ContentPage
         (BindingContext as ProjectManViewModel)?.DoDeleteProject();
     }
 
+    private void OkClicked(object sender, EventArgs e)
+    {
+        (BindingContext as ProjectDetailViewModel)?.AddOrUpdateProject();
+        Shell.Current.GoToAsync("//MainPage");
+    }
+
+
     private void InLineDeleteProjectClicked(object sender, EventArgs e)
     {
         (BindingContext as ProjectManViewModel)?.RefreshPage();

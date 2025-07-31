@@ -28,16 +28,6 @@ namespace Asana.Maui
             (BindingContext as MainPageViewModel)?.DeleteToDo();
         }
 
-        private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
-        {
-            (BindingContext as MainPageViewModel)?.RefreshPage();
-        }
-
-        private void ContentPage_NavigatedFrom(object sender, NavigatedFromEventArgs e)
-        {
-
-        }
-
         private void InLineDeleteToDoClicked(object sender, EventArgs e)
         {
             (BindingContext as MainPageViewModel)?.RefreshPage();
@@ -51,6 +41,17 @@ namespace Asana.Maui
         private void SearchClicked(object sender, EventArgs e)
         {
             (BindingContext as MainPageViewModel)?.HandleSearchClick();
+        }
+
+        // Update page on clicks
+        private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
+        {
+            (BindingContext as MainPageViewModel)?.RefreshPage();
+        }
+
+        private void ContentPage_NavigatedFrom(object sender, NavigatedFromEventArgs e)
+        {
+
         }
     }
 

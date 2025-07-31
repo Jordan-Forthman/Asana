@@ -36,6 +36,7 @@
         <Button Text="Add Project" Clicked="AddClicked"/>
         <Button Text="Edit Project" Clicked="EditClicked"/>
         <Button Text="Delete Project" Clicked="DeleteClicked"/>
+        <Button Text="Ok" Clicked="OkClicked"/>
         <Button Text="Cancel" Clicked="CancelClicked"/>
     </VerticalStackLayout>
 </ContentPage>
