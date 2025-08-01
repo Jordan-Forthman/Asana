@@ -19,7 +19,9 @@ public partial class ProjectDetailView : INotifyPropertyChanged
     }
 
     private int _projectId;
-    public int ProjectId { get; set; } = 0;
+    public int ProjectId { get; set; }
+
+    //public int ProjectId { get; set; } = 0;
 
     public Project? Model { get; set; }
 
@@ -42,7 +44,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
     private void OkClicked(object sender, EventArgs e)
     {
         (BindingContext as ProjectDetailViewModel)?.AddOrUpdateProject();
-        Shell.Current.GoToAsync("//MainPage");
+        Shell.Current.GoToAsync("//ProjectPage");
     }
 
     private void RemoveToDosClicked(object sender, EventArgs e)
@@ -80,6 +82,8 @@ public partial class ProjectDetailView : INotifyPropertyChanged
 
     private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
     {
+        BindingContext = new ProjectDetailViewModel(ProjectId);
+        /*
         base.OnNavigatedTo(e);
         if (ProjectId == 0)
         {
@@ -90,6 +94,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
             var project = ProjectServiceProxy.Current.GetById(ProjectId);
             BindingContext = project != null ? new ProjectDetailViewModel(project) : new ProjectDetailViewModel();
         }
+        */
     }
 
     private void ContentPage_NavigatedFrom(object sender, NavigatedFromEventArgs e)

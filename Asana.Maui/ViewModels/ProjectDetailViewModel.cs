@@ -15,8 +15,25 @@ namespace Asana.Maui.ViewModels
 {
     public class ProjectDetailViewModel : INotifyPropertyChanged
     {
-        public List<ProjectManViewModel> Projects { get; set; }
-        public ProjectManViewModel? SelectedProject {get; set;}
+        public ProjectDetailViewModel()
+        {
+            Projects = new ObservableCollection<ProjectManViewModel>(ProjectServiceProxy.Current.Projects
+                .Select(p => new ProjectManViewModel(p)));
+            Model = new Project();
+        }
+
+        public ProjectDetailViewModel(int projectId)
+        {
+            Model = ProjectServiceProxy.Current.GetById(projectId) ?? new Project();
+            Projects = new ObservableCollection<ProjectManViewModel>(
+                ProjectServiceProxy.Current.Projects.Select(p => new ProjectManViewModel(p)));
+        }
+
+        public ProjectDetailViewModel(Project? model)
+        {
+            Model = model ?? new Project();
+        }
+        public ObservableCollection<ProjectManViewModel> Projects { get; set; }
 
         private Project _model;
         public Project? Model
@@ -28,18 +45,6 @@ namespace Asana.Maui.ViewModels
                 UpdateToDoLists();
                 OnPropertyChanged(nameof(Model));
             }
-        }
-
-        public ProjectDetailViewModel(Project project = null)
-        {
-            Model = project ?? new Project();
-        }
-
-        public ProjectDetailViewModel()
-        {
-            Projects = ProjectServiceProxy.Current.Projects
-                .Select(p => new ProjectManViewModel(p))
-                .ToList();
         }
 
 
@@ -79,7 +84,37 @@ namespace Asana.Maui.ViewModels
         }
         public void AddOrUpdateProject()
         {
-            ProjectServiceProxy.Current.AddOrUpdate(Model);
+            if (Model?.Id == 0)
+            {
+                // If the project is new, assign a new ID
+                ProjectServiceProxy.Current.AddOrUpdate(Model);
+            }
+            else
+            {
+                // If the project already exists, update it
+                ProjectServiceProxy.Current.AddOrUpdate(Model);
+            }
+
+            Projects.Clear();
+            foreach (var p in ProjectServiceProxy.Current.Projects)
+            {
+                // Add each project to the Projects collection
+                Projects.Add(new ProjectManViewModel(p));
+            }
+
+
+            /*
+            // Refresh the project list after adding or updating
+            Projects = new ObservableCollection<ProjectsViewModel>(
+                ProjectServiceProxy.Current.Projects.Select(p => new ProjectsViewModel(p)));
+            */
+            /*Projects = ProjectServiceProxy.Current.Projects
+                .Select(p => new ProjectsViewModel(p))
+                .ToList();*/
+
+            // Notify that the Projects property has changed
+            OnPropertyChanged(nameof(Projects));
+            //ProjectServiceProxy.Current.AddOrUpdate(Model);
         }
 
         public void AddToDo(int toDoId)

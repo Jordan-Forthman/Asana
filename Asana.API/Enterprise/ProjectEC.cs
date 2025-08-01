@@ -1,4 +1,5 @@
-﻿using Asana.API.Database;
+﻿using Api.ToDoApplication.Persistence;
+using Asana.API.Database;
 using Asana.Library.Models;
 
 namespace Asana.API.Enterprise
@@ -7,23 +8,40 @@ namespace Asana.API.Enterprise
     {
         public IEnumerable<Project>? Get(bool Expand = false)
         {
-            //return FakeDatabase.Current.Projects.Take(100);
-            return FakeDatabase.Current.GetProjects(Expand)?.Take(100);
+            var projects = ProjectFilebase.Current.Projects;
+            if (Expand)
+            {
+                var allToDos = ToDoFilebase.Current.ToDos;
+                foreach (var project in projects)
+                {
+                    project.ToDoList = allToDos.Where(t => t.ProjectId == project.Id).ToList();
+                }
+            }
+            return projects.Take(100);
+        }
+
+        public IEnumerable<Project> GetProjects()
+        {
+            return ProjectFilebase.Current.Projects.Take(100);
         }
 
         public Project? GetById(int id)
         {
-            return FakeDatabase.Current.GetProjects(true)?.FirstOrDefault(p => p.Id == id);
+            var project = ProjectFilebase.Current.Projects.FirstOrDefault(p => p.Id == id);
+            if (project != null)
+            {
+                project.ToDoList = ToDoFilebase.Current.ToDos.Where(t => t.ProjectId == id).ToList();
+            }
+            return project;
         }
 
         public Project? AddOrUpdate(Project? project)
         {
-            if(project == null)
+            if (project == null)
             {
-                return project;
+                return null;
             }
-
-            FakeDatabase.Current.AddOrUpdateProject(project);
+            ProjectFilebase.Current.AddOrUpdate(project);
             return project;
         }
 
@@ -32,7 +50,7 @@ namespace Asana.API.Enterprise
             var projectToDelete = GetById(id);
             if (projectToDelete != null)
             {
-                FakeDatabase.Current.DeleteProject(projectToDelete);
+                ProjectFilebase.Current.Delete("Project", id.ToString());
             }
             return projectToDelete;
         }

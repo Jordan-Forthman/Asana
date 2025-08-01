@@ -48,29 +48,33 @@ namespace Api.ToDoApplication.Persistence
 
         public Project AddOrUpdate(Project project)
         {
-            //set up a new Id if one doesn't already exist
             if (project.Id <= 0)
             {
                 project.Id = LastKey + 1;
             }
 
-            //go to the right place
             string path = $"{_projectRoot}\\{project.Id}.json";
 
-
-            //if the item has been previously persisted
             if (File.Exists(path))
             {
-                //blow it up
                 File.Delete(path);
             }
 
-            //write the file
-            File.WriteAllText(path, JsonConvert.SerializeObject(project));
+            var projectToSave = new Project
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Description = project.Description,
+                IsCompleted = project.IsCompleted,
+                CompletePercent = project.CompletePercent
+                // ToDoList is intentionally excluded
+            };
 
-            //return the item, which now has an id
+            File.WriteAllText(path, JsonConvert.SerializeObject(projectToSave));
+
             return project;
         }
+
 
         public List<Project> Projects
         {

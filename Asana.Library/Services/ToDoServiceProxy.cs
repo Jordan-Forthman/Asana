@@ -33,18 +33,20 @@ namespace Asana.Library.Services
             ToDos = JsonConvert.DeserializeObject<List<ToDo>>(todoData) ?? new List<ToDo>();
         }
 
+        private static object _lock = new object(); // Lock instance to prevent multi-threading
         private static ToDoServiceProxy? instance;
-
         public static ToDoServiceProxy Current
         {
             get
             {
-                if(instance == null)
+                lock (_lock)
                 {
-                    instance = new ToDoServiceProxy();
+                    if (instance == null)
+                    {
+                        instance = new ToDoServiceProxy();
+                    }
+                    return instance;
                 }
-
-                return instance;
             }
         }
         public ToDo? AddOrUpdate(ToDo? toDo)

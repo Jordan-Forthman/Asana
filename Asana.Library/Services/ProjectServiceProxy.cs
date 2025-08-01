@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Asana.Library.Services
 {
-    public  class ProjectServiceProxy
+    public class ProjectServiceProxy
     {
         private List<Project> _projectsList;
         public List<Project> Projects
@@ -18,7 +18,7 @@ namespace Asana.Library.Services
             {
                 return _projectsList.ToList();
             }
-            private set // For CLI
+            private set
             {
                 if (value != _projectsList)
                 {
@@ -26,9 +26,11 @@ namespace Asana.Library.Services
                 }
             }
         }
-        private ProjectServiceProxy() 
+        private ProjectServiceProxy()
         {
-            var projectData = new WebRequestHandler().Get("/Project/Expand").Result;
+            var projectData = new WebRequestHandler().Get("/Project").Result;
+
+            //var projectData = new WebRequestHandler().Get("/Project/Expand").Result;
             _projectsList = JsonConvert.DeserializeObject<List<Project>>(projectData) ?? new List<Project>();
         }
 
@@ -38,7 +40,8 @@ namespace Asana.Library.Services
         {
             get
             {
-                lock (_lock) {
+                lock (_lock)
+                {
                     if (instance == null)
                     {
                         instance = new ProjectServiceProxy();
@@ -48,52 +51,58 @@ namespace Asana.Library.Services
             }
         }
 
-        private int nextKey // For CLI
-        {
-            get
-            {
-                if (Projects.Any())
-                {
-                    return Projects.Select(p => p.Id).Max() + 1;
-                }
-                return 1;
-            }
-        }
-
-        public Project? GetById(int id) // For CLI
+        public Project? GetById(int id)
         {
             return Projects.FirstOrDefault(t => t.Id == id);
         }
 
-        public Project? AddOrUpdate(Project? project) // For CLI
+        // Improved AddOrUpdate method
+        public Project? AddOrUpdate(Project? project)
         {
-            if (project != null)
+            if (project == null)
             {
-                if (project.Id == 0)
+                return null;
+            }
+
+            var isNewProject = project.Id == 0;
+            var projectData = new WebRequestHandler().Post("/Project", project).Result;
+
+            // Log the response for debugging
+            Console.WriteLine($"[AddOrUpdate] POST /Project response: {projectData}");
+
+            if (!string.IsNullOrEmpty(projectData) && !projectData.StartsWith("Error:"))
+            {
+                var updatedProject = JsonConvert.DeserializeObject<Project>(projectData);
+
+                if (updatedProject != null)
                 {
-                    project.Id = nextKey;
-                    project.ToDoList ??= new List<ToDo>();
-                    _projectsList.Add(project);
-                }
-                else
-                {
-                    var existing = GetById(project.Id);
-                    if (existing != null)
+                    if (!isNewProject)
                     {
-                        existing.Name = project.Name;
-                        existing.Description = project.Description;
-                        existing.CompletePercent = project.CompletePercent;
-                        // Preserve existing ToDos list
-                        existing.ToDoList = project.ToDoList ?? existing.ToDoList;
+                        var existingProject = _projectsList.FirstOrDefault(p => p.Id == updatedProject.Id);
+                        if (existingProject != null)
+                        {
+                            var index = _projectsList.IndexOf(existingProject);
+                            _projectsList.RemoveAt(index);
+                            _projectsList.Insert(index, updatedProject);
+                        }
                     }
                     else
                     {
-                        project.ToDoList ??= new List<ToDo>();
-                        _projectsList.Add(project);
+                        _projectsList.Add(updatedProject);
                     }
+                    // Return the actual updated project (with correct ID)
+                    return updatedProject;
+                }
+                else
+                {
+                    Console.WriteLine($"[AddOrUpdate] Server error: Could not deserialize response: {projectData}");
                 }
             }
-            return project;
+            else
+            {
+                Console.WriteLine($"[AddOrUpdate] Error or empty response from backend: {projectData}");
+            }
+            return null;
         }
 
         public void DeleteProject(int id)
