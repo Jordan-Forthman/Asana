@@ -44,5 +44,11 @@ namespace Asana.API.Controllers
         {
             return new ProjectEC().AddOrUpdate(project);
         }
+
+        [HttpPost("{projectId}/addtodo")]
+        public Project? AddToDoToProject(int projectId, [FromBody] ToDo toDo)
+        {
+            return new ProjectEC().AddToDoToProject(projectId, toDo);
+        }
     }
 }

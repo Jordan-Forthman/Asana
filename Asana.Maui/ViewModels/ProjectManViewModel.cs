@@ -69,17 +69,17 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        public ObservableCollection<ProjectManViewModel> Projects
+        public ObservableCollection<ProjectDetailViewModel> Projects
         {
             get
             {
                 var projects = _projectSvc.Projects.Where(t => (t?.Name?.Contains(Query) ?? false) || (t?.Description?.Contains(Query) ?? false))
-                        .Select(t => new ProjectManViewModel(t));
+                        .Select(t => new ProjectDetailViewModel(t));
                 if (!IsShowCompleted)
                 {
                     projects = projects.Where(t => !t?.Model?.IsCompleted ?? false);
                 }
-                return new ObservableCollection<ProjectManViewModel>(projects);
+                return new ObservableCollection<ProjectDetailViewModel>(projects);
             }
         }
         public ICommand? ToggleToDoVisibility {  get; set; }
@@ -130,10 +130,22 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        public ProjectDetailViewModel SelectedProject { get; set; }
+        private ProjectDetailViewModel _selectedProject;
+        public ProjectDetailViewModel SelectedProject
+        {
+            get => _selectedProject;
+            set
+            {
+                if (_selectedProject != value)
+                {
+                    _selectedProject = value;
+                    SelectedProjectId = value?.Model?.Id ?? 0; // Update SelectedProjectId using Project.Id
+                    NotifyPropertyChanged(nameof(SelectedProject));
+                }
+            }
+        }
 
-        public int SelectedProjectId => SelectedProject?.Model?.Id ?? 0;
-
+        public int SelectedProjectId { get; set; }
 
         private string query;
         public string Query
@@ -153,17 +165,6 @@ namespace Asana.Maui.ViewModels
         public void AddOrUpdateProject()
         {
             ProjectServiceProxy.Current.AddOrUpdate(Model);
-        }
-
-        public void DoDeleteProject()
-        {
-            if (SelectedProject == null)
-            {
-                return;
-            }
-
-            ProjectServiceProxy.Current.DeleteProject(SelectedProject?.Model?.Id ?? 0);
-            NotifyPropertyChanged(nameof(Projects));
         }
 
         public void RefreshPage()

@@ -54,5 +54,23 @@ namespace Asana.API.Enterprise
             }
             return projectToDelete;
         }
+
+        public Project? AddToDoToProject(int projectId, ToDo toDo)
+        {
+            var project = GetById(projectId);
+            if (project == null)
+                return null;
+
+            // Initialize ToDoList if null
+            if (project.ToDoList == null)
+                project.ToDoList = new List<ToDo>();
+
+            // Add the ToDo
+            project.ToDoList.Add(toDo);
+
+            // Persist the updated project
+            ProjectFilebase.Current.AddOrUpdate(project);
+            return project;
+        }
     }
 }

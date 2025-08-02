@@ -19,20 +19,26 @@ namespace Asana.Maui.ViewModels
         {
             Projects = new ObservableCollection<ProjectManViewModel>(ProjectServiceProxy.Current.Projects
                 .Select(p => new ProjectManViewModel(p)));
-            Model = new Project();
+            Model = new Project { ToDoList = new List<ToDo>() }; // Ensure ToDoList is not null
         }
 
         public ProjectDetailViewModel(int projectId)
         {
-            Model = ProjectServiceProxy.Current.GetById(projectId) ?? new Project();
+            var project = ProjectServiceProxy.Current.GetById(projectId) ?? new Project();
+            project.ToDoList ??= new List<ToDo>();
+            Model = project;
             Projects = new ObservableCollection<ProjectManViewModel>(
                 ProjectServiceProxy.Current.Projects.Select(p => new ProjectManViewModel(p)));
         }
 
         public ProjectDetailViewModel(Project? model)
         {
-            Model = model ?? new Project();
+            var project = model ?? new Project();
+            project.ToDoList ??= new List<ToDo>();
+            Model = project;
         }
+
+        public ProjectManViewModel? SelectedProject { get; set; }
         public ObservableCollection<ProjectManViewModel> Projects { get; set; }
 
         private Project _model;
@@ -52,7 +58,8 @@ namespace Asana.Maui.ViewModels
         public ObservableCollection<ToDoDetailViewModel> CurrentToDos
         {
                 get => _currentToDos;
-                set { _currentToDos = value; OnPropertyChanged(nameof(CurrentToDos)); }
+                set { _currentToDos = value; 
+                OnPropertyChanged(nameof(CurrentToDos)); }
         }
 
         private ObservableCollection<ToDoDetailViewModel> _availableToDos;
@@ -75,13 +82,20 @@ namespace Asana.Maui.ViewModels
 
         private void UpdateToDoLists()
         {
+            if (Model == null)
+            {
+                Model = new Project { ToDoList = new List<ToDo>() };
+            }
+            Model.ToDoList ??= new List<ToDo>();
+
             CurrentToDos = new ObservableCollection<ToDoDetailViewModel>(
-                Model?.ToDoList?.Select(t => new ToDoDetailViewModel(t)) ?? new List<ToDoDetailViewModel>());
+                Model.ToDoList.Select(t => new ToDoDetailViewModel(t)));
             var allToDos = ToDoServiceProxy.Current.ToDos;
-            var projectToDos = Model?.ToDoList ?? new List<ToDo>();
+            var projectToDos = Model.ToDoList;
             AvailableToDos = new ObservableCollection<ToDoDetailViewModel>(
                 allToDos.Where(t => !projectToDos.Contains(t)).Select(t => new ToDoDetailViewModel(t)));
         }
+
         public void AddOrUpdateProject()
         {
             if (Model?.Id == 0)
@@ -122,7 +136,9 @@ namespace Asana.Maui.ViewModels
             if (Model != null)
             {
                 ProjectServiceProxy.Current.AddToDoToProject(Model.Id, toDoId);
-                RefreshPage();
+                // Refresh Model from service to get updated ToDoList
+                Model = ProjectServiceProxy.Current.GetById(Model.Id);
+                // UpdateToDoLists() will be called by Model setter
             }
         }
 
@@ -131,7 +147,7 @@ namespace Asana.Maui.ViewModels
             if (Model != null)
             {
                 ProjectServiceProxy.Current.RemoveToDoFromProject(Model.Id, toDoId);
-                RefreshPage();
+                Model = ProjectServiceProxy.Current.GetById(Model.Id);
             }
         }
 

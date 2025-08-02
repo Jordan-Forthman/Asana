@@ -14,7 +14,6 @@ public partial class ProjectManView : ContentPage
     public ProjectManView()
 	{
 		InitializeComponent();
-        BindingContext = new ProjectManViewModel();
 	}
 
     private void CancelClicked(object sender, EventArgs e)
@@ -30,13 +29,8 @@ public partial class ProjectManView : ContentPage
     private void EditClicked(object sender, EventArgs e)
     {
         var selectedId = (BindingContext as ProjectManViewModel)?.SelectedProjectId ?? 0;
-        Shell.Current.GoToAsync($"//ProjectDetails?projectId");
+        Shell.Current.GoToAsync($"//ProjectDetails?projectId={selectedId}");
         //Shell.Current.GoToAsync($"//ProjectDetails?projectId={selectedId}");
-    }
-
-    private void DeleteClicked(object sender, EventArgs e)
-    {
-        (BindingContext as ProjectManViewModel)?.DoDeleteProject();
     }
 
     private void OkClicked(object sender, EventArgs e)

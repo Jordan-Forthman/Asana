@@ -38,7 +38,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
 
     private void CancelClicked(object sender, EventArgs e)
     {
-        Shell.Current.GoToAsync("//MainPage");
+        Shell.Current.GoToAsync("//ProjectPage");
     }
 
     private void OkClicked(object sender, EventArgs e)
@@ -65,7 +65,7 @@ public partial class ProjectDetailView : INotifyPropertyChanged
         var viewModel = (ProjectDetailViewModel)BindingContext;
         if (viewModel != null)
         {
-            foreach (var toDo in viewModel.CurrentToDos.Where(t => t.IsSelected))
+            foreach (var toDo in viewModel.AvailableToDos.Where(t => t.IsSelected))
             {
                 viewModel.AddToDo(toDo.Model.Id);
             }

@@ -109,6 +109,16 @@ namespace Api.ToDoApplication.Persistence
             }
             return false;
         }
+
+        public void UpdateProjectToDos(int projectId, List<ToDo> toDos)
+        {
+            var project = Projects.FirstOrDefault(p => p.Id == projectId);
+            if (project != null)
+            {
+                project.ToDoList = toDos;
+                AddOrUpdate(project); // Persist the updated project
+            }
+        }
     }
 
 
