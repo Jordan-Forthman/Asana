@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Runtime data written by Asana.API (JSON stores). Override the location with
+# Storage:Root in appsettings.json or the ASANA_DATA_DIR environment variable.
+data/
+
+# Submission and archive bundles. Final.zip (48 MB) was committed once because
+# nothing here excluded archives.
+*.zip
+*.7z
+*.rar

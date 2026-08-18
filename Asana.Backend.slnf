@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "Asana.sln",
+    "projects": [
+      "Asana.API\\Asana.API.csproj",
+      "Asana.CLI\\Asana.CLI.csproj",
+      "Asana.Library\\Asana.Library.csproj"
+    ]
+  }
+}

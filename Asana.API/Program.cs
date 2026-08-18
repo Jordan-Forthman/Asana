@@ -7,6 +7,14 @@ namespace Asana.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Decide where the JSON stores live and create those folders
+            // before any request can reach them. Override with Storage:Root in
+            // appsettings.json or the ASANA_DATA_DIR environment variable.
+            Database.FileStorage.Initialize(
+                builder.Configuration["Storage:Root"]
+                    ?? Environment.GetEnvironmentVariable("ASANA_DATA_DIR"),
+                builder.Environment.ContentRootPath);
+
             // Add services to the container.
 
             builder.Services.AddControllers();

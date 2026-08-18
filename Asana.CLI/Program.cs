@@ -14,15 +14,35 @@ namespace Asana
             int choiceInt;
             do
             {
+                // Every implemented option is listed. The menu used to stop at
+                // "6. Exit" while case 6 actually created a Project, and cases
+                // 7 through 12 were unreachable by anyone reading the menu.
                 Console.WriteLine("Choose a menu option:");
-                Console.WriteLine("1. Create a ToDo");
-                Console.WriteLine("2. List all ToDos");
-                Console.WriteLine("3. List all outstanding ToDos");
-                Console.WriteLine("4. Delete a ToDo");
-                Console.WriteLine("5. Update a ToDo");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("  ToDos");
+                Console.WriteLine("     1. Create a ToDo");
+                Console.WriteLine("     2. List all ToDos");
+                Console.WriteLine("     3. List outstanding ToDos");
+                Console.WriteLine("     4. Delete a ToDo");
+                Console.WriteLine("     5. Update a ToDo");
+                Console.WriteLine("  Projects");
+                Console.WriteLine("     6. Create a Project");
+                Console.WriteLine("     7. List all Projects");
+                Console.WriteLine("     8. List ToDos in a Project");
+                Console.WriteLine("     9. Delete a Project");
+                Console.WriteLine("    10. Update a Project");
+                Console.WriteLine("    11. Add a ToDo to a Project");
+                Console.WriteLine("    12. Exit");
 
-                var choice = Console.ReadLine() ?? "6";
+                var choice = Console.ReadLine();
+                if (choice is null)
+                {
+                    // End of input, from Ctrl-D or piped input running out.
+                    // Defaulting to "6" here meant EOF selected "Create a
+                    // Project", and since the loop only ends on 12 it spun
+                    // forever emitting menus.
+                    Console.WriteLine();
+                    break;
+                }
 
                 if (int.TryParse(choice, out choiceInt))
                 {

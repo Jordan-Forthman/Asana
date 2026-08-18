@@ -1,5 +1,5 @@
 ﻿using Asana.Library.Models;
-using Asana.Maui.Util;
+using Asana.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Asana.Library.Services
 {
     public class ToDoServiceProxy
     {
-        private List<ToDo> _toDoList;
+        private List<ToDo> _toDoList = new List<ToDo>();
         public List<ToDo> ToDos { 
             get
             {
@@ -29,8 +29,11 @@ namespace Asana.Library.Services
 
         private ToDoServiceProxy()
         {
+            // An unreachable API yields a null body, which Json.FromResponse
+            // turns into null rather than throwing. Start empty in that case
+            // instead of crashing the app at startup.
             var todoData = new WebRequestHandler().Get("/ToDo").Result;
-            ToDos = JsonConvert.DeserializeObject<List<ToDo>>(todoData) ?? new List<ToDo>();
+            ToDos = Json.FromResponse<List<ToDo>>(todoData) ?? new List<ToDo>();
         }
 
         private static object _lock = new object(); // Lock instance to prevent multi-threading
@@ -57,7 +60,7 @@ namespace Asana.Library.Services
             }
             var isNewToDo = toDo.Id == 0;
             var todoData = new WebRequestHandler().Post("/ToDo", toDo).Result;
-            var newToDo = JsonConvert.DeserializeObject<ToDo>(todoData);
+            var newToDo = Json.FromResponse<ToDo>(todoData);
 
             if (newToDo != null)
             {
@@ -107,7 +110,7 @@ namespace Asana.Library.Services
                 return;
             }
             var todoData = new WebRequestHandler().Delete($"/ToDo/{id}").Result;
-            var toDoToDelete = JsonConvert.DeserializeObject<ToDo>(todoData);
+            var toDoToDelete = Json.FromResponse<ToDo>(todoData);
             if(toDoToDelete != null)
             {
                 var localToDo = _toDoList.FirstOrDefault(t => t.Id == toDoToDelete.Id);

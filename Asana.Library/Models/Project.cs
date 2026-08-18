@@ -20,5 +20,14 @@ namespace Asana.Library.Models
         public int? CompletePercent { get; set; }
 
         public List<ToDo>? ToDoList { get; set; }
+
+        // Without this the CLI's project listing printed
+        // "Asana.Library.Models.Project" for every row, since it just
+        // Console.WriteLine's each item. ToDo already had an override.
+        public override string ToString()
+        {
+            var percent = CompletePercent.HasValue ? $" ({CompletePercent}% complete)" : string.Empty;
+            return $"[{Id}] {Name} - {Description}{percent}";
+        }
     }
 }

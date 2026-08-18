@@ -1,4 +1,3 @@
-﻿using Api.ToDoApplication.Persistence;
 using Asana.API.Database;
 using Asana.Library.Models;
 
@@ -32,6 +31,14 @@ namespace Asana.API.Enterprise
 
         public ToDo? AddOrUpdate(ToDo? toDo)
         {
+            // A malformed or empty request body binds to null here. Passing it
+            // through was dereferenced inside the filebase and surfaced as a
+            // 500 rather than a handled response.
+            if (toDo == null)
+            {
+                return null;
+            }
+
             ToDoFilebase.Current.AddOrUpdate(toDo);
             return toDo;
         }

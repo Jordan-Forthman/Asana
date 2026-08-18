@@ -1,4 +1,4 @@
-﻿using Asana.Library.Models;
+using Asana.Library.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,13 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.ToDoApplication.Persistence
+namespace Asana.API.Database
 {
     public class ProjectFilebase
     {
-        private string _root;
-        private string _projectRoot;
-        private static ProjectFilebase _instance;
+        private static ProjectFilebase? _instance;
 
 
         public static ProjectFilebase Current
@@ -28,10 +26,9 @@ namespace Api.ToDoApplication.Persistence
             }
         }
 
+        // Storage locations come from FileStorage, configured at startup.
         private ProjectFilebase()
         {
-            _root = @"C:\temp";
-            _projectRoot = $"{_root}\\Projects";
         }
 
         public int LastKey
@@ -53,7 +50,7 @@ namespace Api.ToDoApplication.Persistence
                 project.Id = LastKey + 1;
             }
 
-            string path = $"{_projectRoot}\\{project.Id}.json";
+            string path = Path.Combine(FileStorage.ProjectRoot, $"{project.Id}.json");
 
             if (File.Exists(path))
             {
@@ -80,7 +77,7 @@ namespace Api.ToDoApplication.Persistence
         {
             get
             {
-                var root = new DirectoryInfo(_projectRoot);
+                var root = new DirectoryInfo(FileStorage.ProjectRoot);
                 var _projects = new List<Project>();
                 foreach (var projectFile in root.GetFiles())
                 {
@@ -100,7 +97,7 @@ namespace Api.ToDoApplication.Persistence
         {
             if (int.TryParse(id, out int idInt) && type == "Project")
             {
-                string path = $"{_projectRoot}\\{idInt}.json";
+                string path = Path.Combine(FileStorage.ProjectRoot, $"{idInt}.json");
                 if (File.Exists(path))
                 {
                     File.Delete(path);

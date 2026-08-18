@@ -12,13 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Asana.Library">
-      <HintPath>..\Asana.Library\bin\Debug\net8.0\Asana.Library.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Util\" />
+    <!--
+      Reference the project rather than a DLL under bin/Debug. The previous
+      HintPath only resolved if Asana.Library happened to have been built
+      already, and bin/ is not in source control, so a fresh clone failed to
+      compile with 53 errors about missing ToDo and Project types.
+    -->
+    <ProjectReference Include="..\Asana.Library\Asana.Library.csproj" />
   </ItemGroup>
 
 </Project>

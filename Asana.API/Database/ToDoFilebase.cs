@@ -6,13 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.ToDoApplication.Persistence
+namespace Asana.API.Database
 {
     public class ToDoFilebase
     {
-        private string _root;
-        private string _toDoRoot;
-        private static ToDoFilebase _instance;
+        private static ToDoFilebase? _instance;
 
 
         public static ToDoFilebase Current
@@ -28,10 +26,9 @@ namespace Api.ToDoApplication.Persistence
             }
         }
 
+        // Storage locations come from FileStorage, configured at startup.
         private ToDoFilebase()
         {
-            _root = @"C:\temp";
-            _toDoRoot = $"{_root}\\ToDos";
         }
 
         public int LastKey
@@ -55,7 +52,7 @@ namespace Api.ToDoApplication.Persistence
             }
 
             //go to the right place
-            string path = $"{_toDoRoot}\\{toDo.Id}.json";
+            string path = Path.Combine(FileStorage.ToDoRoot, $"{toDo.Id}.json");
             
 
             //if the item has been previously persisted
@@ -76,7 +73,7 @@ namespace Api.ToDoApplication.Persistence
         {
             get
             {
-                var root = new DirectoryInfo(_toDoRoot);
+                var root = new DirectoryInfo(FileStorage.ToDoRoot);
                 var _toDos = new List<ToDo>();
                 foreach(var toDoFile in root.GetFiles())
                 {
@@ -96,7 +93,7 @@ namespace Api.ToDoApplication.Persistence
         {
             if (int.TryParse(id, out int idInt) && type == "ToDo")
             {
-                string path = $"{_toDoRoot}\\{idInt}.json";
+                string path = Path.Combine(FileStorage.ToDoRoot, $"{idInt}.json");
                 if (File.Exists(path))
                 {
                     File.Delete(path);

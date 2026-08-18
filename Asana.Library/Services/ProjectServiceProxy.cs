@@ -1,5 +1,5 @@
 ﻿using Asana.Library.Models;
-using Asana.Maui.Util;
+using Asana.Library.Util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,10 +28,9 @@ namespace Asana.Library.Services
         }
         private ProjectServiceProxy()
         {
+            // See ToDoServiceProxy: an unreachable API yields a null body.
             var projectData = new WebRequestHandler().Get("/Project").Result;
-
-            //var projectData = new WebRequestHandler().Get("/Project/Expand").Result;
-            _projectsList = JsonConvert.DeserializeObject<List<Project>>(projectData) ?? new List<Project>();
+            _projectsList = Json.FromResponse<List<Project>>(projectData) ?? new List<Project>();
         }
 
         private static object _lock = new object();
@@ -65,7 +64,7 @@ namespace Asana.Library.Services
             }
             var isNewProject = project.Id == 0;
             var projectData = new WebRequestHandler().Post("/Project", project).Result;
-            var newProject = JsonConvert.DeserializeObject<Project>(projectData);
+            var newProject = Json.FromResponse<Project>(projectData);
 
             if (newProject != null)
             {
@@ -94,7 +93,7 @@ namespace Asana.Library.Services
                 return;
             }
             var projectData = new WebRequestHandler().Delete($"/Project/{id}").Result;
-            var projectToDelete = JsonConvert.DeserializeObject<Project>(projectData);
+            var projectToDelete = Json.FromResponse<Project>(projectData);
             if (projectToDelete != null)
             {
                 var localProject = _projectsList.FirstOrDefault(t => t.Id == projectToDelete.Id);
@@ -151,7 +150,7 @@ namespace Asana.Library.Services
 
             // Step 3: Send ToDo to server and get the updated ToDo object
             var todoData = new WebRequestHandler().Post("/ToDo", toDo).Result;
-            var newToDo = JsonConvert.DeserializeObject<ToDo>(todoData);
+            var newToDo = Json.FromResponse<ToDo>(todoData);
 
             // Step 4: Add the new ToDo to the project's ToDoList if not already present
             if (newToDo != null)
