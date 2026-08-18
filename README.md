@@ -125,19 +125,3 @@ the folders, so a first run works on a clean machine.
 singletons guarded by a lock. They cache a local list, push changes to the API,
 and reconcile the response back into that list, so both front ends see the same
 state without duplicating HTTP code.
-
-## Notes
-
-Built for a .NET course.
-
-Since then the repository has been cleaned up so it builds and runs from a fresh
-clone. `Asana.API` referenced the library through a `HintPath` into `bin/Debug`,
-which is not in source control, so a clone failed with 53 compile errors.
-Storage was hardcoded to `C:\temp` with backslash separators, so the API only
-ran on Windows and only if that folder already existed. The clients pointed at a
-hardcoded `https://localhost:7172` and swallowed every connection error into an
-empty catch, which then crashed the app when the null response reached the JSON
-deserializer. The console menu listed six options while twelve were implemented,
-and the one it labelled "Exit" created a project, so reaching the end of input
-selected it and looped forever. A 48 MB `Final.zip` and a duplicated
-`WebRequestHandler` have been removed, and the build is warning clean.
